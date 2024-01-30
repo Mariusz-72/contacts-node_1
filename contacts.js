@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
@@ -8,7 +8,12 @@ async function listContacts() {
     try {
         const data = await fs.promises.readFile(contactsPath, "utf8");
         const contacts = JSON.parse(data);
-        console.table(contacts);
+        if (contacts.length === 0) {
+            console.log("No contacts available.");
+        } else {
+            console.table(contacts);
+        }
+        // console.table(contacts);
         return contacts;
     } catch (error) {
         console.log(error.message);
@@ -20,6 +25,12 @@ async function listContacts() {
         const data = await fs.promises.readFile(contactsPath, "utf8");
         const contacts = JSON.parse(data);
         const contact = contacts.find(({ id }) => id === contactId);
+
+        if (!contact) {
+            console.log("There is no such user");
+            return null;
+        }
+
         console.table(contact);
         return contact;
     } catch (error) {
